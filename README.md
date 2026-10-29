@@ -96,9 +96,9 @@
 
 | Label | Score range | The exact text a reader sees |
 |---|---|---|
-| high-confidence human |  |  |
-| unsure |  |  |
-| high-confidence AI |  |  |
+| high-confidence human | <0.3 | This is likely human |
+| unsure | 0.3 - 0.7 | We couldn't tell, see guess for why we think its undecided |
+| high-confidence AI | >0.7 | We think this may be AI, you are free to appeal. see guess for why we think its AI |
 
 **Why I worded the "unsure" one this way:**
 <!-- It's the hardest of the three. It has to admit uncertainty without

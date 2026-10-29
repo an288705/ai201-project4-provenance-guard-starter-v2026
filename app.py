@@ -199,47 +199,66 @@ def submit():
     what should this do when `text` is missing, empty, or enormous? A crash on
     a malformed input is one of the most common real failures there is.
     """
-    payload = request.get_json(silent=True) or {}
+    import detector
+    import stylometry
+    import scoring
 
-    # TODO: delete this and build the route.
+    payload = request.get_json(silent=True) or {}
+    text = payload.get('text')
+    creator_id = payload.get('creator_id',None)
+
+    model_score = detector.model_signal(text)
+    style_score = stylometry.style_signal(text)
+
+    if not text:
+        return jsonify({'error': "Error: text did not parse"}), 400
+
+    content_id = f"c_{uuid.uuid4().hex[:12]}"
+    audit.log_decision(
+        content_id=content_id,
+        creator_id=creator_id,
+        model_score=model_score,
+        style_score=style_score
+    )
+
+    combined_score = scoring.combine_signals(model_score, style_score)
+    _, label = scoring.score_to_label(combined_score)
+
+
     return jsonify({
-        "error": "not_implemented",
-        "message": "POST /submit isn't built yet — see the TODO in app.py.",
-        "you_sent": {
-            "text_length": len(payload.get("text", "")),
-            "creator_id": payload.get("creator_id"),
-        },
-    }), 501
+        "content_id": "hardcoded",
+        "creator_id": creator_id,
+        "confidence": model_score,
+        "guess": "Not sure",
+        "label": label,
+        "model_score": model_score,
+        "style_score": style_score,
+    }), 200
 
 
 @app.post("/appeal")
 def appeal():
-    """
-    A writer says you got it wrong. ← TODO — Milestone 5
-
-    Expects JSON:
-        {"content_id": "...", "reasoning": "..."}
-
-    Should:
-      1. Check the content_id actually exists — `audit.entries_for(id)` tells
-         you. A typo here fails silently and looks like a broken endpoint,
-         which is the single most common way this milestone eats an hour.
-      2. Record the appeal with `audit.log_appeal(...)`, which moves the item
-         to `under_review`.
-      3. Confirm to the writer. No automatic re-checking needed.
-
-    This is the smallest endpoint in the project and the one that matters most
-    to the person on the other end. It's the only thing standing between a
-    wrong accusation and nothing at all.
-    """
     payload = request.get_json(silent=True) or {}
 
-    # TODO: delete this and build the route.
+    if not payload:
+        return jsonify({
+            "error": "payload is empty",
+        }), 400
+
+    content_id = payload.get('id')
+    _id = audit.entries_for(content_id)
+
+    if not _id:
+        return jsonify({
+            "error": "your submission was not received by us",
+        }), 401
+
+    audit.log_appeal(_id)
+
     return jsonify({
-        "error": "not_implemented",
-        "message": "POST /appeal isn't built yet — see the TODO in app.py.",
+        "message": "Your submission has been appealed",
         "you_sent": payload,
-    }), 501
+    }), 200
 
 
 # ── Already works ─────────────────────────────────────────────────────────────

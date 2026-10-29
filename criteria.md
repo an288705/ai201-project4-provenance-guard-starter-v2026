@@ -23,13 +23,13 @@ than a missed detection"* is a real answer.
 
 **Cover at least three of these five areas.** They're prompts, not a form.
 
-| Area | A question it could answer |
-|---|---|
-| False positives | How often may a human's writing get called AI? |
-| Score spread | How far apart should clearly-AI and clearly-human text score? |
-| Label coverage | Is every one of your three labels actually reachable? |
-| The appeal path | Does an appeal always change status and always get recorded? |
-| Bad input | What happens when `text` is missing, empty, or enormous? |
+| Area            | A question it could answer                                    |
+| --------------- | ------------------------------------------------------------- |
+| False positives | How often may a human's writing get called AI?                |
+| Score spread    | How far apart should clearly-AI and clearly-human text score? |
+| Label coverage  | Is every one of your three labels actually reachable?         |
+| The appeal path | Does an appeal always change status and always get recorded?  |
+| Bad input       | What happens when `text` is missing, empty, or enormous?    |
 
 Two things worth knowing before you pick numbers:
 
@@ -42,63 +42,54 @@ Two things worth knowing before you pick numbers:
   a **miss**.
 
 ---
-## 1.
+
+## 1. It is flagged as AI if it scored above .7
 
 <!-- Your criterion. It must name a number. -->
 
-
-
 **Why this target:**
 
-
+This is about where it stops being ambiguous
 
 ---
 
-## 2.
+## 2. It is human if it scored below .3
 
 <!-- Your criterion. -->
 
-
-
 **Why this target:**
 
-
+This is about where it stops being ambiguous
 
 ---
 
-## 3.
+## 3. Appeals with reason change score
 
 <!-- Your criterion. -->
 
-
-
 **Why this target:**
 
-
+This hedges for ai false positive
 
 ---
 
-## 4.
+## 4. Scores between 0.7 and 0.9 can be a false positive
 
 <!-- Your criterion. -->
 
-
-
 **Why this target:**
 
-
+there is no real way to tell between AI and human anymore
 
 ---
 
-## 5.
+## 5. There should be a logical explanation given for why a score is what it is
 
 <!-- Your criterion. -->
 
-
-
 **Why this target:**
 
-
+Classification problems like this should have a natural language explanation
 
 ---
 
